@@ -4,7 +4,7 @@
     <string name="home">Home</string>
     <string name="home_not_installed">Not installed</string>
     <string name="home_click_to_install">Tap to install</string>
-    <string name="home_working">Working</string>
+    <string name="home_working">Meowing</string>
     <string name="home_working_version">Version: %d</string>
     <string name="home_unsupported">Unsupported</string>
     <string name="home_unsupported_reason">KernelSU only supports GKI kernels now, but you can patch the image for GKI devices.</string>
