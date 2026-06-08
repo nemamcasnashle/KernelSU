@@ -57,7 +57,7 @@ import me.weishu.kernelsu.ui.component.statustag.StatusTag
 import java.util.concurrent.TimeUnit
 import java.io.File
 
-fun runRootCommand(command: String, timeoutSeconds: Long = 3): String? {
+private fun runRootCommand(command: String, timeoutSeconds: Long = 3): String? {
     return try {
         val process = ProcessBuilder("su", "-c", command)
             .redirectErrorStream(true)
