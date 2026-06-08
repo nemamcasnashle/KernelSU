@@ -86,9 +86,8 @@ class HomeViewModel : ViewModel() {
         val ksuVersion =
             if (isManager) {
                 runRootCommand("[ -f /data/local/tmp/.custom_manager/version ] && cat /data/local/tmp/.custom_manager/version")
-                    ?: Natives.version
-                        ?.trim()
-                        ?.takeIf { it.isNotEmpty() && it != "Unknown" }
+                    ?: Natives.version.toString()
+                        .takeIf { it.isNotEmpty() && it != "Unknown" }
                     ?: getKsudVersion()
                     ?: "Unknown"
             } else {
