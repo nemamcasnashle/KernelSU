@@ -25,8 +25,6 @@ import me.weishu.kernelsu.ui.util.getSELinuxStatusRaw
 import me.weishu.kernelsu.ui.util.getSuperuserCount
 import me.weishu.kernelsu.ui.util.module.LatestVersionInfo
 import me.weishu.kernelsu.ui.util.rootAvailable
-import java.util.concurrent.TimeUnit
-import java.io.File
 
 class HomeViewModel : ViewModel() {
 
@@ -44,56 +42,10 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun runRootCommand(command: String, timeoutSeconds: Long = 3): String? {
-        return try {
-            val process = ProcessBuilder("su", "-c", command)
-                .redirectErrorStream(true)
-                .start()
-
-            if (!process.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
-                process.destroyForcibly()
-                null
-            } else {
-                val output = process.inputStream
-                    .bufferedReader()
-                    .use { it.readText() }
-                    .trim()
-
-                if (process.exitValue() == 0 && output.isNotEmpty()) {
-                    output
-                } else {
-                    null
-                }
-            }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    fun getKsudVersion(): String? {
-        return runRootCommand("for p in /data/adb/ksu/bin/ksud /data/adb/ksud \$(command -v ksud 2>/dev/null); do [ -x \"\$p\" ] && \"\$p\" -V && exit 0; done; exit 1")
-            ?.lineSequence()
-            ?.firstOrNull()
-            ?.replace(Regex("^ksud\\s+"), "")
-            ?.trim()
-            ?.takeIf { it.isNotEmpty() }
-            ?.let { "v$it" }
-    }
-
     private fun buildState(): HomeUiState {
         val kernelVersion = getKernelVersion()
         val isManager = Natives.isManager
-        val ksuVersion =
-            if (isManager) {
-                runRootCommand("[ -f /data/local/tmp/.custom_manager/version ] && cat /data/local/tmp/.custom_manager/version")
-                    ?: Natives.version
-                        ?.trim()
-                        ?.takeIf { it.isNotEmpty() && it != "Unknown" }
-                    ?: getKsudVersion()
-                    ?: "Unknown"
-            } else {
-                null
-            }
+        val ksuVersion = if (isManager) Natives.version else null
         val lkmMode = ksuVersion?.let { if (kernelVersion.isGKI()) Natives.isLkmMode else null }
         val isRootAvailable = rootAvailable()
         val managerVersion = getManagerVersion(ksuApp)
